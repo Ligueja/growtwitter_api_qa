@@ -1,15 +1,16 @@
 import bcrypt from "bcrypt";
+import { HttpError } from "../erros/http.error";
 
 export class Bcrypt {
   public async encoded(plainText: string): Promise<string> {
     const salt = process.env.BCRYPT_SALT;
 
     if (!salt) {
-      throw new Error("BCRYPT_SALT is required");
+      throw new HttpError("BCRYPT_SALT is required", 500);
     }
 
     if (isNaN(Number(salt))) {
-      throw new Error("BCRYPT_SALT should be a number");
+      throw new HttpError("BCRYPT_SALT should be a number", 500);
     }
 
     const hash = await bcrypt.hash(plainText, Number(salt));

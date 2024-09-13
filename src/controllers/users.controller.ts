@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { prismaConnection } from "../database/prisma.connection";
+import { UserService } from "../services/user.service";
+import { HttpError } from "../erros/http.error";
+import { onError } from "../utils/on-error.util";
 
 export class UsersController {
   public static async create(request: Request, response: Response) {
@@ -7,56 +10,24 @@ export class UsersController {
       // captura dos dados do body "inputs do usuário":
       const { name, email, username, password, avatar } = request.body;
 
-      //Verificação se já existe e-mail
-      const existingEmail = await prismaConnection.user.findUnique({
-        where: {
-          emailAddress: email,
-        },
-      });
+      //após criar o service, fazer conforme abaixo:
+      const service = new UserService();
 
-      if (existingEmail) {
-        return response.status(400).json({
-          ok: false,
-          message: "E-mail já cadastrado",
-        });
-      }
-
-      // verificação se já existe o username:
-      const existingUser = await prismaConnection.user.findUnique({
-        where: {
-          username: username,
-        },
-      });
-
-      if (existingUser) {
-        return response.status(400).json({
-          ok: false,
-          message: "Esse username já está sendo usado, tente outro",
-        });
-      }
-
-      // código para salvar dados no BD:
-      const newUser = await prismaConnection.user.create({
-        data: {
-          name,
-          emailAddress: email,
-          username,
-          password,
-          avatar,
-        },
+      const data = await service.createUser({
+        name,
+        email,
+        username,
+        password,
+        avatar,
       });
 
       return response.status(201).json({
         ok: true,
         message: "Usuário cadastrado com sucesso",
+        data,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, response);
     }
   }
   public static async list(request: Request, response: Response) {
@@ -84,8 +55,19 @@ export class UsersController {
           deleted: false,
         },
       });
+      // Verifica se não há usuários retornados
+      if (users.length === 0) {
+        return response.status(200).json({
+          ok: true,
+          message: "Não há usuários cadastrados.",
+        });
+      }
 
-      const totalUsers = users.length;
+      const totalUsers = await prismaConnection.user.count({
+        where: {
+          deleted: false,
+        },
+      });
 
       return response.status(200).json({
         ok: true,
@@ -99,12 +81,7 @@ export class UsersController {
         },
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, response);
     }
   }
   public static async get(request: Request, response: Response) {
@@ -131,12 +108,7 @@ export class UsersController {
         user: userFound,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, response);
     }
   }
   public static async update(request: Request, response: Response) {
@@ -174,12 +146,7 @@ export class UsersController {
         user: userUpdate,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, response);
     }
   }
   public static async delete(request: Request, response: Response) {
@@ -217,12 +184,7 @@ export class UsersController {
         userDeleted,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, response);
     }
   }
 }

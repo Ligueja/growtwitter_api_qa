@@ -10,7 +10,7 @@ export class AuthController {
       //buscar usuário com o e-mail e senha informados no corpo da requisição:
       const userFound = await prismaConnection.user.findFirst({
         where: {
-          OR: [{ username: username }, { emailAddress: email }],
+          OR: [{ username: username }, { email: email }],
           password: password,
         },
       });

@@ -1,6 +1,6 @@
 export interface UserLoggedDTO {
   id: string;
   name: string;
-  emailAddress: string;
+  email: string;
   username: string;
 }
