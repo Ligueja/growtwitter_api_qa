@@ -34,51 +34,16 @@ export class UsersController {
     try {
       let { limit, page } = request.query;
 
-      let limitDefault = 5;
-      let pageDefault = 1;
-
-      if (limit) {
-        limitDefault = Number(limit);
-      }
-
-      if (page) {
-        pageDefault = Number(page);
-      }
-
-      const users = await prismaConnection.user.findMany({
-        skip: limitDefault * (pageDefault - 1),
-        take: limitDefault,
-        orderBy: {
-          name: "asc",
-        },
-        where: {
-          deleted: false,
-        },
-      });
-      // Verifica se não há usuários retornados
-      if (users.length === 0) {
-        return response.status(200).json({
-          ok: true,
-          message: "Não há usuários cadastrados.",
-        });
-      }
-
-      const totalUsers = await prismaConnection.user.count({
-        where: {
-          deleted: false,
-        },
+      const service = new UserService();
+      const users = await service.listUsers({
+        limit: limit ? Number(limit) : undefined,
+        page: page ? Number(page) : undefined,
       });
 
       return response.status(200).json({
         ok: true,
         message: "Abaixo lista de usuários cadastrados:",
         users: users,
-        pagination: {
-          limit: limitDefault,
-          page: pageDefault,
-          count: totalUsers,
-          totalPages: Math.ceil(totalUsers / limitDefault),
-        },
       });
     } catch (err) {
       return onError(err, response);

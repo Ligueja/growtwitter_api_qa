@@ -1,6 +1,4 @@
-import { randomUUID } from "crypto";
 import { Request, Response } from "express";
-import { prismaConnection } from "../database/prisma.connection";
 import { AuthService } from "../services/auth.service";
 import { onError } from "../utils/on-error.util";
 

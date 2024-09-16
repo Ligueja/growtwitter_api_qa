@@ -9,8 +9,6 @@ export class authRoutes {
     // definições de rotas:
     // rota de login e rota de logout:
     router.post("/login", [LoginMiddleware.validate], AuthController.Login);
-    router.post("/logout", AuthController.logout);
-
     return router;
   }
 }

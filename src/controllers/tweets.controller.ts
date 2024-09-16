@@ -6,11 +6,12 @@ export class TweetsController {
     try {
       const { content, userId } = request.body;
 
+      const { id } = userId;
       // criação do tweet
       const newTweet = await prismaConnection.tweet.create({
         data: {
           content,
-          userId,
+          userId: id,
         },
       });
 
@@ -33,10 +34,12 @@ export class TweetsController {
     try {
       const { userId } = request.body;
 
+      const { id } = userId;
+
       const tweets = await prismaConnection.tweet.findMany({
         where: {
           type: "TWEET",
-          userId,
+          userId: id,
         },
         orderBy: {
           createdAt: "desc",

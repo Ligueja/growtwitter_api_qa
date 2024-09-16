@@ -2,7 +2,7 @@ import { prismaConnection } from "../database/prisma.connection";
 import { HttpError } from "../erros/http.error";
 import { Bcrypt } from "../libs/bcrypt.lib";
 import { JWT } from "../libs/jwt.lib";
-import { LoginUserInputDTO, LoginUserOutputDTO } from "../dtos/auth-login.dto";
+import { LoginUserInputDTO, LoginUserOutputDTO } from "../dtos";
 
 export class AuthService {
   public async loginUser(
