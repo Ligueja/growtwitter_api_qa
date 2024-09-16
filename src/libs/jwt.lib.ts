@@ -3,7 +3,7 @@ import { UserLoggedDTO } from "../dtos/user-logged.dto";
 import { HttpError } from "../erros/http.error";
 
 export class JWT {
-  public generateToke(data: UserLoggedDTO): string {
+  public generateToken(data: UserLoggedDTO): string {
     const secretKey = process.env.JWT_SECRET;
 
     if (!secretKey) {
