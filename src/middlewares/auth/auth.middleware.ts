@@ -1,33 +1,35 @@
 import { NextFunction, Request, Response } from "express";
-import { prismaConnection } from "../../database/prisma.connection";
+import { JWT } from "../../libs/jwt.lib";
 
 export class AuthMiddleware {
   public static async validate(
-    req: Request,
-    res: Response,
+    requeste: Request,
+    response: Response,
     next: NextFunction
   ) {
-    const headers = req.headers;
+    const bearerToken = requeste.headers.authorization;
 
-    if (!headers.authorization) {
-      return res.status(401).json({
+    if (!bearerToken) {
+      return response.status(401).json({
         ok: false,
         message: "Token é obrigatório",
       });
     }
 
-    const userFound = await prismaConnection.user.findFirst({
-      where: { authToken: headers.authorization },
-    });
+    // abaixo vamos "limpar" o token, o deixando somente com a string correta.
+    const jwtToken = bearerToken.replace(/Bearer/i, "").trim();
 
-    if (!userFound) {
-      return res.status(401).json({
+    const jwt = new JWT();
+    const userLogged = jwt.decodedToken(jwtToken);
+
+    if (!userLogged) {
+      return response.status(401).json({
         ok: false,
-        message: "Usuário não autorizado",
+        message: "Token inválido",
       });
     }
 
-    req.body.userId = userFound.id;
+    requeste.body.userId = userLogged;
 
     return next();
   }
