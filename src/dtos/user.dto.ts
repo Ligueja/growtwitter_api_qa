@@ -22,3 +22,8 @@ export interface ListallUsersOutputDTO {
     totalPages: number;
   };
 }
+
+export interface updateUserInputDTO {
+  id: string;
+  name: string;
+}

@@ -6,6 +6,7 @@ import {
   CreateUserDTO,
   ListAllUsersInputDTO,
   ListallUsersOutputDTO,
+  updateUserInputDTO,
 } from "../dtos";
 import { HttpError } from "../erros/http.error";
 
@@ -38,6 +39,30 @@ export class UserService {
     });
 
     return newUser;
+  }
+
+  public async existingEmail(email: any): Promise<boolean> {
+    //Verificação se já existe e-mail
+    const existingEmail = await prismaConnection.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    // Boolean(existingEmail) transforma o objeto "existingEmail em boolean"
+    return Boolean(existingEmail);
+  }
+
+  public async existingUsername(username: any): Promise<boolean> {
+    //Verificação se já existe e-mail
+    const existingUsername = await prismaConnection.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
+
+    // Boolean(existingUsername) transforma o objeto "existingEmail em boolean"
+    return Boolean(existingUsername);
   }
 
   public async listUsers(
@@ -82,30 +107,6 @@ export class UserService {
     };
   }
 
-  public async existingEmail(email: any): Promise<boolean> {
-    //Verificação se já existe e-mail
-    const existingEmail = await prismaConnection.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-
-    // Boolean(existingEmail) transforma o objeto "existingEmail em boolean"
-    return Boolean(existingEmail);
-  }
-
-  public async existingUsername(username: any): Promise<boolean> {
-    //Verificação se já existe e-mail
-    const existingUsername = await prismaConnection.user.findUnique({
-      where: {
-        username: username,
-      },
-    });
-
-    // Boolean(existingUsername) transforma o objeto "existingEmail em boolean"
-    return Boolean(existingUsername);
-  }
-
   public async totalUsers(): Promise<number> {
     const totalUsers = await prismaConnection.user.count({
       where: {
@@ -114,5 +115,53 @@ export class UserService {
     });
 
     return totalUsers;
+  }
+
+  public async updateUser(input: updateUserInputDTO): Promise<User> {
+    const userFound = await this.getUserById(input.id);
+
+    const userUpdate = await prismaConnection.user.update({
+      where: {
+        id: userFound.id,
+      },
+      data: {
+        name: input.name,
+        updatedAt: new Date(),
+      },
+    });
+
+    return userUpdate;
+  }
+
+  public async getUserById(id: string): Promise<User> {
+    const userFound = await prismaConnection.user.findUnique({
+      where: {
+        id: id,
+        deleted: false,
+      },
+    });
+
+    if (!userFound) {
+      throw new HttpError("Usuário não encontrado", 404);
+    }
+
+    return userFound;
+  }
+
+  public async deleteUser(id: string): Promise<User> {
+    const userFound = await this.getUserById(id);
+
+    const userDeleted = await prismaConnection.user.update({
+      where: {
+        id: userFound.id,
+        deleted: false,
+      },
+      data: {
+        deleted: true,
+        deletedAt: new Date(),
+      },
+    });
+
+    return userDeleted;
   }
 }

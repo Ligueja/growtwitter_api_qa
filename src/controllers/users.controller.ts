@@ -49,66 +49,22 @@ export class UsersController {
       return onError(err, response);
     }
   }
-  public static async get(request: Request, response: Response) {
-    try {
-      const { id } = request.params;
-
-      const userFound = await prismaConnection.user.findUnique({
-        where: {
-          id,
-          deleted: false,
-        },
-      });
-
-      if (!userFound) {
-        return response.status(404).json({
-          ok: false,
-          message: "Usuário não localizado em nosso Banco de Dados",
-        });
-      }
-
-      return response.status(201).json({
-        ok: true,
-        message: `Usuário localizado com sucesso`,
-        user: userFound,
-      });
-    } catch (err) {
-      return onError(err, response);
-    }
-  }
   public static async update(request: Request, response: Response) {
     try {
       const { id } = request.params;
       const { name } = request.body;
 
-      const userFound = await prismaConnection.user.findUnique({
-        where: {
-          id,
-          deleted: false,
-        },
-      });
+      const service = new UserService();
 
-      if (!userFound) {
-        return response.status(404).json({
-          ok: false,
-          message: "Usuário não localizado em nosso Banco de Dados",
-        });
-      }
-
-      const userUpdate = await prismaConnection.user.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          updatedAt: new Date(),
-        },
+      const userUpdated = await service.updateUser({
+        id,
+        name,
       });
 
       return response.status(201).json({
         ok: true,
         message: `Usuário atualizado com sucesso`,
-        user: userUpdate,
+        userUpdated,
       });
     } catch (err) {
       return onError(err, response);
@@ -118,30 +74,9 @@ export class UsersController {
     try {
       const { id } = request.params;
 
-      const userFound = await prismaConnection.user.findUnique({
-        where: {
-          id,
-          deleted: false,
-        },
-      });
+      const service = new UserService();
 
-      if (!userFound) {
-        return response.status(404).json({
-          ok: false,
-          message: "Usuário não localizado em nosso Banco de Dados",
-        });
-      }
-
-      const userDeleted = await prismaConnection.user.update({
-        where: {
-          id,
-          deleted: false,
-        },
-        data: {
-          deleted: true,
-          deletedAt: new Date(),
-        },
-      });
+      const userDeleted = await service.deleteUser(id);
 
       return response.status(200).json({
         ok: true,
