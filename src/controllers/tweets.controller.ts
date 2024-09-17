@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { prismaConnection } from "../database/prisma.connection";
 import { TweetService } from "../services/tweets.service";
 import { onError } from "../utils/on-error.util";
 
@@ -9,8 +8,6 @@ export class TweetsController {
       const { content } = request.body;
 
       const userId = request.body.userId;
-
-      // const id = userId.id;
 
       const service = new TweetService();
 
