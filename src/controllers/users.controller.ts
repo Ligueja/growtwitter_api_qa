@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { prismaConnection } from "../database/prisma.connection";
-import { UserService } from "../services/user.service";
-import { HttpError } from "../erros/http.error";
+import { UserService } from "../services/users.service";
 import { onError } from "../utils/on-error.util";
 
 export class UsersController {

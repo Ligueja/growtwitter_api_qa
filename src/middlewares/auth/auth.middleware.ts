@@ -29,7 +29,7 @@ export class AuthMiddleware {
       });
     }
 
-    requeste.body.userId = userLogged;
+    requeste.body.userId = userLogged.id;
 
     return next();
   }

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { TweetsController } from "../controllers/tweets.controller";
 import { AuthMiddleware } from "../middlewares/auth/auth.middleware";
-import { ValidUuidParamsMiddleware } from '../middlewares/common/valid-uuid-params.middleware';
+import { ValidUuidParamsMiddleware } from "../middlewares/common/valid-uuid-params.middleware";
 import { CreateTweetMiddleware } from "../middlewares/tweets/create.tweets.middleware";
 import { UpdateTweetsMiddleware } from "../middlewares/tweets/update.tweets.middlewares";
 
@@ -17,12 +17,15 @@ export class tweetsRoutes {
     );
     //rota para listar tweets:
     router.get("/", [AuthMiddleware.validate], TweetsController.list);
-    //rota para exibir tweet específico através do ID:
-    router.get("/:id", [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate], TweetsController.get);
+
     //rota para atualizar tweet específico através do ID, somwente se estiver logado:
     router.put(
       "/:id",
-      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate, UpdateTweetsMiddleware.validate],
+      [
+        AuthMiddleware.validate,
+        ValidUuidParamsMiddleware.validate,
+        UpdateTweetsMiddleware.validate,
+      ],
       TweetsController.update
     );
     //rota para deletar tweet específico através do ID, somente se estiver logado:
