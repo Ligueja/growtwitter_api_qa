@@ -4,7 +4,7 @@ import express from "express";
 import { authRoutes } from "./routes/auth.routes";
 import { feedRoutes } from "./routes/feed.routes";
 import { likeRoutes } from "./routes/like.routes";
-import { replyRoutes } from "./routes/replys.routes";
+import { ReplyRoutes } from "./routes/replys.routes";
 import { tweetsRoutes } from "./routes/tweets.routes";
 import { UsersRoutes } from "./routes/users.routes";
 
@@ -17,7 +17,7 @@ app.use("/users", UsersRoutes.execute());
 app.use("/auth", authRoutes.execute());
 app.use("/tweets", tweetsRoutes.execute());
 app.use("/likes", likeRoutes.execute());
-app.use("/replys", replyRoutes.execute());
+app.use("/replys", ReplyRoutes.execute());
 app.use("/feed", feedRoutes.execute());
 
 app.listen(process.env.PORT, () => {

@@ -1,152 +1,67 @@
 import { Request, Response } from "express";
-import { prismaConnection } from "../database/prisma.connection";
+import { ReplyService } from "../services/replys.service";
+import { onError } from "../utils/on-error.util";
 
-export class ReplysController {
-  public static async create(request: Request, response: Response) {
+export class ReplyController {
+  public static async create(req: Request, res: Response) {
     try {
-      const { content } = request.body;
-      const { tweetId } = request.params;
-      const userId = request.body.userId;
+      const tweetId = req.params.id;
+      const { userId, content } = req.body;
 
-      // Verificar se o tweet à ser respondido/retwitado  existe
-      const tweetFound = await prismaConnection.tweet.findUnique({
-        where: {
-          id: tweetId,
-        },
+      const service = new ReplyService();
+
+      const createTweetReply = await service.createReply({
+        content,
+        tweetId,
+        userId,
       });
 
-      if (!tweetFound) {
-        return response.status(404).json({
-          ok: false,
-          message: "Tweet não encontrado",
-        });
-      }
-
-      // Verificar se o usuário já respondeu a este tweet
-      const existingReply = await prismaConnection.reply.findFirst({
-        where: {
-          userId,
-          tweetId,
-        },
-      });
-
-      if (existingReply) {
-        return response.status(400).json({
-          ok: false,
-          message: "Você já respondeu a este tweet.",
-        });
-      }
-
-      // Criação da resposta como um tweet do tipo REPLY
-      const newReply = await prismaConnection.tweet.create({
-        data: {
-          content,
-          type: "REPLY", // Setando o tipo como REPLY
-          userId,
-        },
-      });
-
-      // Criar relação de resposta
-      await prismaConnection.reply.create({
-        data: {
-          userId,
-          tweetId: tweetFound.id, // Referencia ao tweet original
-        },
-      });
-
-      return response.status(201).json({
+      return res.status(201).json({
         ok: true,
-        message: "Resposta cadastrada com sucesso",
-        newReply: { content },
+        message: "Reply criado com sucesso",
+        createTweetReply,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, res);
     }
   }
 
-  public static async list(request: Request, response: Response) {
+  public static async get(req: Request, res: Response) {
     try {
-      const userId = request.body.userId;
+      const tweetId = req.params.id;
+      const { userId } = req.body;
 
-      // Buscar todos os replies do usuário que está autenticado
-      const replies = await prismaConnection.reply.findMany({
-        where: {
-          userId,
-        },
-        include: {
-          tweet: {
-            select: {
-              content: true,
-            },
-          },
-        },
+      const service = new ReplyService();
+      const replyFound = await service.getReplyById({
+        tweetId,
+        userId,
       });
 
-      return response.status(200).json({
+      return res.status(200).json({
         ok: true,
-        message: "Replies listados com sucesso",
-        replies,
+        message: "Reply listado abaixo",
+        reply: replyFound,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, res);
     }
   }
 
-  public static async delete(request: Request, response: Response) {
+  public static async delete(req: Request, res: Response) {
     try {
-      const { replyId } = request.params;
-      const userId = request.body.userId;
+      const tweetId = req.params.id;
+      const { userId } = req.body;
 
-      // Verificar se o reply existe e se o usuário é o autor
-      const replyFound = await prismaConnection.reply.findUnique({
-        where: {
-          id: replyId,
-        },
-      });
+      const service = new ReplyService();
+      const replyDeleted = await service.deleteReply({ tweetId, userId });
 
-      if (!replyFound) {
-        return response.status(404).json({
-          ok: false,
-          message: "Reply não encontrado",
-        });
-      }
-
-      // validar que somente o usuário que fez o reply possa apagar o mesmo
-      if (replyFound.userId !== userId) {
-        return response.status(403).json({
-          ok: false,
-          message: "Você não tem permissão para deletar este reply",
-        });
-      }
-
-      // Deletar o reply
-      await prismaConnection.reply.delete({
-        where: {
-          id: replyId,
-        },
-      });
-
-      return response.status(200).json({
+      return res.status(200).json({
         ok: true,
         message: "Reply deletado com sucesso",
+        replyDeleted,
       });
     } catch (err) {
-      return response.status(500).json({
-        ok: false,
-        message: `Ocorreu um erro inesperado. Erro:${(err as Error).name} - ${
-          (err as Error).message
-        }`,
-      });
+      return onError(err, res);
     }
   }
 }

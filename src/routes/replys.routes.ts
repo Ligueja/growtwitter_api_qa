@@ -1,28 +1,53 @@
 import { Router } from "express";
+import { ReplyController } from "../controllers/replys.controller";
 import { AuthMiddleware } from "../middlewares/auth/auth.middleware";
-import { ReplysController } from "../controllers/replys.controller";
+import { ValidUuidParamsMiddleware } from "../middlewares/common/valid-uuid-params.middleware";
 
-export class replyRoutes {
+export class ReplyRoutes {
   public static execute(): Router {
     const router = Router();
 
-    // definição de rotas:
-    // ambas as rotas são privadas e necessitam autenticação (token)
-    //rotas para criar, listar, atualizar e deletar um Reply:
-
     router.post(
-      "/:tweetId",
-      [AuthMiddleware.validate],
-      ReplysController.create
+      "/:id",
+      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
+      ReplyController.create
     );
-    router.get("/", [AuthMiddleware.validate], ReplysController.list);
-    // router.put("/:replyId", [AuthMiddleware.validate], ReplysController.update);
+    router.get(
+      "/:id",
+      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
+      ReplyController.get
+    );
     router.delete(
-      "/:replyId",
-      [AuthMiddleware.validate],
-      ReplysController.delete
+      "/:id",
+      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
+      ReplyController.delete
     );
 
     return router;
   }
 }
+
+// import { Router } from "express";
+// import { AuthMiddleware } from "../middlewares/auth/auth.middleware";
+// import { ReplysController } from "../controllers/replys.controller";
+
+// export class replyRoutes {
+//   public static execute(): Router {
+//     const router = Router();
+
+//     router.post(
+//       "/:tweetId",
+//       [AuthMiddleware.validate],
+//       ReplysController.create
+//     );
+//     router.get("/", [AuthMiddleware.validate], ReplysController.list);
+
+//     router.delete(
+//       "/:replyId",
+//       [AuthMiddleware.validate],
+//       ReplysController.delete
+//     );
+
+//     return router;
+//   }
+// }
