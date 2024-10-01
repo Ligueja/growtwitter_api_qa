@@ -1,4 +1,5 @@
 import prismaConnection from "../database/prisma.connection";
+import { HttpError } from "../erros/http.error";
 
 export class FeedService {
   public static async getFeed(userId: string) {
