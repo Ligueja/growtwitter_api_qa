@@ -1,46 +1,37 @@
-import { Tweet } from "@prisma/client";
-import { prismaConnection } from "../database/prisma.connection";
-import { HttpError } from "../erros/http.error";
+import { Tweet, TweetType } from "@prisma/client";
+import prismaConnection from "../database/prisma.connection";
 import { CreateReply, GetReplyById } from "../dtos";
+import { HttpError } from "../erros/http.error";
 
 export class ReplyService {
   public async createReply(input: CreateReply): Promise<Tweet> {
-    const tweetFound = await prismaConnection.tweet.findFirst({
-      where: { id: input.tweetId },
+    const tweetFound = await prismaConnection.tweet.findUnique({
+      where: {
+        id: input.tweetOriginalId,
+        type: "TWEET",
+      },
     });
 
     if (!tweetFound) {
-      throw new HttpError("Tweet não encontrado", 404);
+      throw new HttpError("O Tweet não foi localizado", 404);
     }
 
-    const createTweetReply = await prismaConnection.tweet.create({
+    const tweetReplyCreate = await prismaConnection.tweet.create({
       data: {
         userId: input.userId,
         content: input.content,
-        type: "REPLY",
+        type: TweetType.REPLY,
       },
     });
 
     await prismaConnection.reply.create({
       data: {
-        tweetOriginalId: input.tweetId,
-        tweetReplyId: createTweetReply.id,
+        tweetOriginalId: input.tweetOriginalId,
+        tweetReplyId: tweetReplyCreate.id,
       },
     });
 
-    return createTweetReply;
-  }
-
-  public async getReplyById(input: GetReplyById): Promise<Tweet> {
-    const replyFound = await prismaConnection.tweet.findFirst({
-      where: { userId: input.userId, id: input.tweetId, type: "REPLY" },
-    });
-
-    if (!replyFound) {
-      throw new HttpError("Reply não encontrado", 404);
-    }
-
-    return replyFound;
+    return tweetReplyCreate;
   }
 
   public async deleteReply(input: GetReplyById): Promise<Tweet> {

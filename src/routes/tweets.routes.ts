@@ -5,20 +5,18 @@ import { ValidUuidParamsMiddleware } from "../middlewares/common/valid-uuid-para
 import { CreateTweetMiddleware } from "../middlewares/tweets/create.tweets.middleware";
 import { UpdateTweetsMiddleware } from "../middlewares/tweets/update.tweets.middlewares";
 
-export class tweetsRoutes {
+export class TweetsRoutes {
   public static execute(): Router {
     const router = Router();
 
-    //rota para cadastro de um tweet, somente se estiver logado:
     router.post(
       "/",
-      [AuthMiddleware.validate, CreateTweetMiddleware.validade],
+      [AuthMiddleware.validate, CreateTweetMiddleware.validate],
       TweetsController.create
     );
-    //rota para listar tweets:
+
     router.get("/", [AuthMiddleware.validate], TweetsController.list);
 
-    //rota para atualizar tweet específico através do ID, somwente se estiver logado:
     router.put(
       "/:id",
       [
@@ -28,7 +26,7 @@ export class tweetsRoutes {
       ],
       TweetsController.update
     );
-    //rota para deletar tweet específico através do ID, somente se estiver logado:
+
     router.delete(
       "/:id",
       [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],

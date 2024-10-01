@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { prismaConnection } from "../database/prisma.connection";
 import { LikeService } from "../services/likes.service";
 import { onError } from "../utils/on-error.util";
 

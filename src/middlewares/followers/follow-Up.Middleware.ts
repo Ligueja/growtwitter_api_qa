@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from "express";
+import { validate } from "uuid";
 
-export class CreateTweetMiddleware {
+export class ToggleFollowUpMiddleware {
   public static validate(
     request: Request,
     response: Response,
     next: NextFunction
   ) {
-    const { content } = request.body;
+    const userId = request.body.userId;
 
-    if (!content || typeof content !== "string") {
+    if (!userId || !validate(userId)) {
       return response.status(400).json({
         ok: false,
-        message: "É obrigatório passar um conteúdo para o tweet",
+        message: "ID do usuário fornecido é inválido.",
       });
     }
     return next();

@@ -5,16 +5,15 @@ import {
   ListTweetsInputDTO,
   UpdateTweetInputDTO,
 } from "../dtos";
-import { prismaConnection } from "../database/prisma.connection";
+import prismaConnection from "../database/prisma.connection";
 import { HttpError } from "../erros/http.error";
 
 export class TweetService {
   public async createTweet(input: CreateTweetDTO): Promise<Tweet> {
-    // Criação direta do tweet usando o userId e o content
     const newTweet = await prismaConnection.tweet.create({
       data: {
         content: input.content,
-        userId: input.userId, // Usando o userId diretamente
+        userId: input.userId,
       },
     });
 
@@ -25,6 +24,7 @@ export class TweetService {
     const tweets = await prismaConnection.tweet.findMany({
       where: {
         userId: input.userId,
+        type: "TWEET",
       },
       orderBy: {
         createdAt: "desc",
@@ -45,8 +45,26 @@ export class TweetService {
             },
           },
         },
+        reply: {
+          select: {
+            reply: {
+              select: {
+                id: true,
+                content: true,
+                type: true,
+                user: {
+                  select: {
+                    username: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
+
     return tweets;
   }
 

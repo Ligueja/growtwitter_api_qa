@@ -6,9 +6,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "rootDirs": ["./src", "./tests"], 
   },
+  "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts"]
 }

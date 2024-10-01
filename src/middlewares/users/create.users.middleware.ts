@@ -36,13 +36,6 @@ export class CreateUsersMiddleware {
       });
     }
 
-    // if (typeof avatar !== "string") {
-    //   return response.status(400).json({
-    //     ok: false,
-    //     message: "Insira um avatar válido",
-    //   });
-    // }
-
     return next();
   }
 }

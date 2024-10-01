@@ -1,6 +1,5 @@
-// o seervice contém regras de negócio e chamadas no BD.
 import { User } from "@prisma/client";
-import { prismaConnection } from "../database/prisma.connection";
+import prismaConnection from "../database/prisma.connection";
 import { Bcrypt } from "../libs/bcrypt.lib";
 import {
   CreateUserDTO,
@@ -11,7 +10,6 @@ import {
 import { HttpError } from "../erros/http.error";
 
 export class UserService {
-  // no input é a entrada de dados na promise é a saida de dados
   public async createUser(input: CreateUserDTO): Promise<User> {
     const existingEmail = await this.existingEmail(input.email);
 
@@ -42,26 +40,22 @@ export class UserService {
   }
 
   public async existingEmail(email: any): Promise<boolean> {
-    //Verificação se já existe e-mail
     const existingEmail = await prismaConnection.user.findUnique({
       where: {
         email: email,
       },
     });
 
-    // Boolean(existingEmail) transforma o objeto "existingEmail em boolean"
     return Boolean(existingEmail);
   }
 
   public async existingUsername(username: any): Promise<boolean> {
-    //Verificação se já existe e-mail
     const existingUsername = await prismaConnection.user.findUnique({
       where: {
         username: username,
       },
     });
 
-    // Boolean(existingUsername) transforma o objeto "existingEmail em boolean"
     return Boolean(existingUsername);
   }
 

@@ -1,67 +1,47 @@
 import { Request, Response } from "express";
-import { ReplyService } from "../services/replys.service";
 import { onError } from "../utils/on-error.util";
+import { ReplyService } from "../services/replys.service";
 
 export class ReplyController {
-  public static async create(req: Request, res: Response) {
+  public static async create(request: Request, response: Response) {
     try {
-      const tweetId = req.params.id;
-      const { userId, content } = req.body;
+      const { content, tweetOriginalId } = request.body;
+
+      const userId = request.body.userId;
 
       const service = new ReplyService();
 
-      const createTweetReply = await service.createReply({
+      const tweetReplyCreate = await service.createReply({
+        tweetOriginalId,
         content,
-        tweetId,
         userId,
       });
 
-      return res.status(201).json({
+      return response.status(201).json({
         ok: true,
-        message: "Reply criado com sucesso",
-        createTweetReply,
+        message: "Reply cadastrado com sucesso",
+        tweetReplyCreate,
       });
     } catch (err) {
-      return onError(err, res);
+      return onError(err, response);
     }
   }
 
-  public static async get(req: Request, res: Response) {
+  public static async delete(request: Request, response: Response) {
     try {
-      const tweetId = req.params.id;
-      const { userId } = req.body;
-
-      const service = new ReplyService();
-      const replyFound = await service.getReplyById({
-        tweetId,
-        userId,
-      });
-
-      return res.status(200).json({
-        ok: true,
-        message: "Reply listado abaixo",
-        reply: replyFound,
-      });
-    } catch (err) {
-      return onError(err, res);
-    }
-  }
-
-  public static async delete(req: Request, res: Response) {
-    try {
-      const tweetId = req.params.id;
-      const { userId } = req.body;
+      const tweetId = request.params.id;
+      const userId = request.body.userId;
 
       const service = new ReplyService();
       const replyDeleted = await service.deleteReply({ tweetId, userId });
 
-      return res.status(200).json({
+      return response.status(200).json({
         ok: true,
         message: "Reply deletado com sucesso",
         replyDeleted,
       });
     } catch (err) {
-      return onError(err, res);
+      return onError(err, response);
     }
   }
 }

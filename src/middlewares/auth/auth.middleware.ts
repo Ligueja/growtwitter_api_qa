@@ -16,7 +16,6 @@ export class AuthMiddleware {
       });
     }
 
-    // abaixo vamos "limpar" o token, o deixando somente com a string correta.
     const jwtToken = bearerToken.replace(/Bearer/i, "").trim();
 
     const jwt = new JWT();
@@ -30,6 +29,9 @@ export class AuthMiddleware {
     }
 
     requeste.body.userId = userLogged.id;
+    requeste.body.username = userLogged.username;
+    requeste.body.name = userLogged.name;
+    requeste.body.email = userLogged.email;
 
     return next();
   }

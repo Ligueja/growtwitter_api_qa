@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ReplyController } from "../controllers/replys.controller";
 import { AuthMiddleware } from "../middlewares/auth/auth.middleware";
+import { CreateReplyMiddleware } from "../middlewares/reply/create-reply.middleware";
 import { ValidUuidParamsMiddleware } from "../middlewares/common/valid-uuid-params.middleware";
 
 export class ReplyRoutes {
@@ -8,15 +9,11 @@ export class ReplyRoutes {
     const router = Router();
 
     router.post(
-      "/:id",
-      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
+      "/",
+      [AuthMiddleware.validate, CreateReplyMiddleware.validate],
       ReplyController.create
     );
-    router.get(
-      "/:id",
-      [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
-      ReplyController.get
-    );
+
     router.delete(
       "/:id",
       [AuthMiddleware.validate, ValidUuidParamsMiddleware.validate],
@@ -26,28 +23,3 @@ export class ReplyRoutes {
     return router;
   }
 }
-
-// import { Router } from "express";
-// import { AuthMiddleware } from "../middlewares/auth/auth.middleware";
-// import { ReplysController } from "../controllers/replys.controller";
-
-// export class replyRoutes {
-//   public static execute(): Router {
-//     const router = Router();
-
-//     router.post(
-//       "/:tweetId",
-//       [AuthMiddleware.validate],
-//       ReplysController.create
-//     );
-//     router.get("/", [AuthMiddleware.validate], ReplysController.list);
-
-//     router.delete(
-//       "/:replyId",
-//       [AuthMiddleware.validate],
-//       ReplysController.delete
-//     );
-
-//     return router;
-//   }
-// }

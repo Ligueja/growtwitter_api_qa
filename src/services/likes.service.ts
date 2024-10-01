@@ -1,5 +1,5 @@
 import { Like, Tweet } from "@prisma/client";
-import { prismaConnection } from "../database/prisma.connection";
+import prismaConnection from "../database/prisma.connection";
 import { HttpError } from "../erros/http.error";
 import { CreateLikeDTO } from "../dtos";
 

@@ -1,0 +1,243 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "API do GrowTwitter",
+    "version": "1.0.0",
+    "title": "GrowTwitter API"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Rotas de autenticação"
+    },
+    {
+      "name": "Feed",
+      "description": "Rotas de feed"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Autenticação de usuários",
+        "description": "Autentica um usuário com e-mail ou username e senha.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/LoginUserInputDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário autenticado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/LoginUserOutputDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ErroPadrao"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feed": {
+      "get": {
+        "tags": ["Feed"],
+        "summary": "Obter o feed do usuário autenticado",
+        "description": "Obtém o feed de tweets do usário logado/autenticado e dos usuários que ele segue.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Feed retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Abaixo o feed de @nome_usuario"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Tweet"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ErroPadrao"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LoginUserInputDTO": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "usuario@exemplo.com"
+        },
+        "username": {
+          "type": "string",
+          "example": "nome_usuario",
+          "nullable": true
+        },
+        "password": {
+          "type": "string",
+          "example": "senha123"
+        }
+      },
+      "required": ["password"]
+    },
+    "LoginUserOutputDTO": {
+      "type": "object",
+      "properties": {
+        "authToken": {
+          "type": "string",
+          "example": "jwt_token_aqui"
+        },
+        "userLogged": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "Nome do Usuário"
+        },
+        "username": {
+          "type": "string",
+          "example": "nome_usuario"
+        },
+        "email": {
+          "type": "string",
+          "example": "usuario@exemplo.com"
+        }
+      }
+    },
+    "Tweet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "content": {
+          "type": "string",
+          "example": "Esse é o conteúdo do tweet"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2023-09-30T12:34:56.000Z"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "likes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "nome_usuario"
+              }
+            }
+          }
+        },
+        "reply": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 2
+              },
+              "content": {
+                "type": "string",
+                "example": "Essa é uma resposta"
+              },
+              "user": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ErroPadrao": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "example": false
+        },
+        "message": {
+          "type": "string",
+          "example": "Credenciais inválidas"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 export interface CreateReply {
-  tweetId: string;
+  tweetOriginalId: string;
   content: string;
   userId: string;
 }

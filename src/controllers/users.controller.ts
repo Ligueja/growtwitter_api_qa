@@ -5,10 +5,8 @@ import { onError } from "../utils/on-error.util";
 export class UsersController {
   public static async create(request: Request, response: Response) {
     try {
-      // captura dos dados do body "inputs do usuário":
       const { name, email, username, password, avatar } = request.body;
 
-      //após criar o service, fazer conforme abaixo:
       const service = new UserService();
 
       const data = await service.createUser({
