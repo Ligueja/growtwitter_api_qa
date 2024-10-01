@@ -6,8 +6,8 @@ describe("FeedService - getFeed", () => {
 
   test("Deveria retornar o feed com tweets dos usuários seguidos", async () => {
     prismaMock.follower.findMany.mockResolvedValueOnce([
-      { id: "follower1", followerId: "user1", userId: "user2" }, // Incluído o campo 'id'
-      { id: "follower2", followerId: "user1", userId: "user3" }, // Incluído o campo 'id'
+      { id: "follower1", followerId: "user1", userId: "user2" },
+      { id: "follower2", followerId: "user1", userId: "user3" },
     ]);
 
     prismaMock.tweet.findMany.mockResolvedValueOnce([
@@ -18,13 +18,12 @@ describe("FeedService - getFeed", () => {
         createdAt: new Date(),
         type: "TWEET",
         user: {
-          // Garantindo que a relação user é aceita
           username: "user2",
           name: "User Two",
         },
         Like: [],
         reply: [],
-      } as any, // Adicionando 'as any' para ignorar o erro de tipo
+      } as any,
       {
         id: "tweet2",
         content: "Tweet de user3",
