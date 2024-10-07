@@ -69,22 +69,16 @@ describe("AuthService - loginUser", () => {
       name: "User One",
       email: "user1@example.com",
       username: "user1",
-      password: "hashed_password", // Senha já criptografada
-      avatar: null, // Propriedade adicional
-      deleted: false, // Propriedade adicional
-      createdAt: new Date(), // Propriedade adicional
-      updatedAt: new Date(), // Propriedade adicional
-      deletedAt: null, // Propriedade adicional
+      password: "hashed_password",
+      avatar: null,
+      deleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
     });
 
-    /**
-     * Mockando o bcrypt para retornar true, simulando que a senha está correta
-     */
     jest.spyOn(Bcrypt.prototype, "verify").mockResolvedValue(true);
 
-    /**
-     * Mockando o JWT para gerar um token de forma previsível
-     */
     const mockToken = "mocked_jwt_token";
     jest.spyOn(JWT.prototype, "generateToken").mockReturnValue(mockToken);
 
@@ -94,9 +88,6 @@ describe("AuthService - loginUser", () => {
       password: "correct_password",
     });
 
-    /**
-     * Verifica se o retorno contém o authToken e os dados do usuário
-     */
     expect(result).toHaveProperty("authToken", mockToken);
     expect(result).toHaveProperty("userLogged");
     expect(result.userLogged).toMatchObject({
@@ -106,10 +97,6 @@ describe("AuthService - loginUser", () => {
       username: "user1",
     });
 
-    /**
-     * Verifica se o JWT foi gerado com os dados corretos
-     */
-
     expect(JWT.prototype.generateToken).toHaveBeenCalledWith({
       id: "user1",
       name: "User One",
@@ -117,9 +104,6 @@ describe("AuthService - loginUser", () => {
       username: "user1",
     });
 
-    /**
-     * Assert 5: Verifica se o bcrypt foi chamado para verificar a senha
-     */
     expect(Bcrypt.prototype.verify).toHaveBeenCalledWith(
       "hashed_password",
       "correct_password"

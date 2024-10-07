@@ -75,7 +75,7 @@ export class TweetService {
       throw new HttpError(
         "Você não tem permissão para atualizar este tweet",
         403
-      ); // Erro 403: Proibido
+      );
     }
 
     const tweetUpdated = await prismaConnection.tweet.update({

@@ -5,7 +5,7 @@ import { FollowersService } from "../services/followers.service";
 export class FollowersController {
   public static async toggle(request: Request, response: Response) {
     try {
-      const { userId, username, user } = request.body;
+      const { userId, user } = request.body;
 
       const service = new FollowersService();
       const result = await service.toggleFollow(userId, user);
