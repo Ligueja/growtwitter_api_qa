@@ -1,5 +1,5 @@
-import { FeedService } from "../../src/services/feed.service";
-import { prismaMock } from "../config/prisma.mock";
+import { FeedService } from "../../../src/services/feed.service";
+import { prismaMock } from "../../config/prisma.mock";
 
 describe("FeedService - getFeed", () => {
   const service = new FeedService();

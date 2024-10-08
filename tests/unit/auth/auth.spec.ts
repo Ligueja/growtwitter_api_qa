@@ -1,8 +1,8 @@
-import { AuthService } from "../../src/services/auth.service";
-import { prismaMock } from "../config/prisma.mock";
-import { HttpError } from "../../src/erros/http.error";
-import { Bcrypt } from "../../src/libs/bcrypt.lib";
-import { JWT } from "../../src/libs/jwt.lib";
+import { AuthService } from "../../../src/services/auth.service";
+import { prismaMock } from "../../config/prisma.mock";
+import { HttpError } from "../../../src/erros/http.error";
+import { Bcrypt } from "../../../src/libs/bcrypt.lib";
+import { JWT } from "../../../src/libs/jwt.lib";
 
 describe("AuthService - loginUser", () => {
   const service = new AuthService();

@@ -1,6 +1,6 @@
-import { FollowersService } from "../../src/services/followers.service";
-import { prismaMock } from "../config/prisma.mock";
-import { HttpError } from "../../src/erros/http.error";
+import { FollowersService } from "../../../src/services/followers.service";
+import { prismaMock } from "../../config/prisma.mock";
+import { HttpError } from "../../../src/erros/http.error";
 
 describe("FollowersService", () => {
   const service = new FollowersService();

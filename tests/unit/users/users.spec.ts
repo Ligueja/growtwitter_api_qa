@@ -1,7 +1,7 @@
-import { UserService } from "../../src/services/users.service";
-import { prismaMock } from "../config/prisma.mock";
-import { HttpError } from "../../src/erros/http.error";
-import { Bcrypt } from "../../src/libs/bcrypt.lib";
+import { UserService } from "../../../src/services/users.service";
+import { prismaMock } from "../../config/prisma.mock";
+import { HttpError } from "../../../src/erros/http.error";
+import { Bcrypt } from "../../../src/libs/bcrypt.lib";
 
 describe("UserService - createUser", () => {
   const service = new UserService();

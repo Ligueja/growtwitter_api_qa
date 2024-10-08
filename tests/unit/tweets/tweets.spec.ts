@@ -1,6 +1,6 @@
-import { TweetService } from "../../src/services/tweets.service";
-import { prismaMock } from "../config/prisma.mock";
-import { HttpError } from "../../src/erros/http.error";
+import { TweetService } from "../../../src/services/tweets.service";
+import { prismaMock } from "../../config/prisma.mock";
+import { HttpError } from "../../../src/erros/http.error";
 import { TweetType } from "@prisma/client";
 
 describe("TweetService - createTweet", () => {

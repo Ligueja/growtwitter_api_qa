@@ -1,6 +1,6 @@
-import { ReplyService } from "../../src/services/replys.service";
-import { prismaMock } from "../config/prisma.mock";
-import { HttpError } from "../../src/erros/http.error";
+import { ReplyService } from "../../../src/services/replys.service";
+import { prismaMock } from "../../config/prisma.mock";
+import { HttpError } from "../../../src/erros/http.error";
 import { TweetType } from "@prisma/client";
 
 describe("ReplyService - createReply", () => {
