@@ -7,9 +7,6 @@ import { JWT } from "../../../src/libs/jwt.lib";
 describe("AuthService - loginUser", () => {
   const service = new AuthService();
 
-  /**
-   * Testando se o login falha com credenciais inválidas (usuário não encontrado)
-   */
   test("Deveria lançar exceção se o usuário não for encontrado", async () => {
     prismaMock.user.findFirst.mockResolvedValue(null);
 
@@ -19,16 +16,10 @@ describe("AuthService - loginUser", () => {
       password: "wrong_password",
     });
 
-    /**
-     * Verifica se lança uma exceção de credenciais inválidas
-     */
     await expect(result).rejects.toThrow(HttpError);
     await expect(result).rejects.toThrow("Credenciais inválidas");
   });
 
-  /**
-   * Testando login com senha incorreta
-   */
   test("Deveria lançar exceção se a senha não coincidir", async () => {
     prismaMock.user.findFirst.mockResolvedValue({
       id: "user1",
@@ -43,9 +34,6 @@ describe("AuthService - loginUser", () => {
       deletedAt: null,
     });
 
-    /**
-     * Mockando o bcrypt para retornar false, simulando que a senha está incorreta
-     */
     jest.spyOn(Bcrypt.prototype, "verify").mockResolvedValue(false);
 
     const result = service.loginUser({
@@ -54,15 +42,10 @@ describe("AuthService - loginUser", () => {
       password: "wrong_password",
     });
 
-    /**
-     * Verifica se lança exceção de credenciais inválidas
-     */
     await expect(result).rejects.toThrow(HttpError);
     await expect(result).rejects.toThrow("Credenciais inválidas");
   });
-  /**
-   * Testando login com sucesso
-   */
+
   test("Deveria lançar exceção se a senha não coincidir", async () => {
     prismaMock.user.findFirst.mockResolvedValue({
       id: "user1",

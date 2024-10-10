@@ -7,7 +7,6 @@ export function createServer() {
   app.use(express.json());
   app.use(cors());
 
-  // definição das rotas
   makeRoutes(app);
 
   return app;
